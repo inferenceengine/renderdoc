@@ -46,3 +46,4 @@ qrenderdoc/3rdparty/pyside
 plugins-*/
 __pycache__
 android-sdk-linux/
+renderdoc_build
