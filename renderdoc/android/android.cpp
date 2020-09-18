@@ -1204,7 +1204,7 @@ ExecuteResult AndroidRemoteServer::ExecuteAndInject(const char *a, const char *w
       Android::adbExecCommand(
           m_deviceID, "shell settings put global gpu_debug_layers " RENDERDOC_VULKAN_LAYER_NAME);
       Android::adbExecCommand(
-          m_deviceID, "shell settings put global gpu_debug_layers_gles " RENDERDOC_ANDROID_LIBRARY);
+          m_deviceID, "shell settings put global gpu_debug_layers_gles " RENDERDOC_ANDROID_LIBRARY ":Layer1_32");
     }
     else
     {
