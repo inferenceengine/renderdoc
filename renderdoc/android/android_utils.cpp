@@ -96,7 +96,7 @@ rdcstr GetActivityName(const rdcstr &packageAndActivity)
 
 ABI GetABI(const rdcstr &abiName)
 {
-  if(abiName == "armeabi-v7a")
+  if(abiName == "armeabi-v7a" || abiName == "armeabi")
     return ABI::armeabi_v7a;
   else if(abiName == "arm64-v8a")
     return ABI::arm64_v8a;
