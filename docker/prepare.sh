@@ -6,7 +6,7 @@ set -x
 apt-get update
 
 # for add-apt-repository
-apt-get install -y software-properties-common python-software-properties wget openjdk-8-jdk
+apt-get install -y software-properties-common python-software-properties wget openjdk-8-jdk unzip
 
 # to allow https apt repositories
 apt-get install -y apt-transport-https ca-certificates libssl-dev
