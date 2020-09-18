@@ -1,0 +1,14 @@
+stages:
+- build
+
+job:
+  only:
+    - master
+  stage: build
+
+  script:
+    - ./docker/build.sh
+
+  artifacts:
+    paths:
+    - package/jedi-renderdoc.tar.gz
