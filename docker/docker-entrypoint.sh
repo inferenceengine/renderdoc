@@ -86,24 +86,24 @@ popd # build-android-arm64
 #
 cd /jedi/
 rm -rf package/
-mkdir -p package
+mkdir -p package/jedi-renderdoc/
 cd package/
-cp -R ../dist/* .
+cp -R ../dist/* jedi-renderdoc/
 
 if [ -d /jedi/plugins-linux64 ]; then
-	cp -R /jedi/plugins-linux64 "./share/renderdoc/plugins"
+	cp -R /jedi/plugins-linux64 "jedi-renderdoc/share/renderdoc/plugins"
 	chmod +x -R "./share/renderdoc/plugins"/*
 else
 	echo "WARNING: Plugins not present. Download and extract https://renderdoc.org/plugins.tgz in root folder";
 fi
 
 # copy in all of the android files.
-mkdir -p "./share/renderdoc/plugins/android/"
+mkdir -p "jedi-renderdoc/share/renderdoc/plugins/android/"
 
 if ls /jedi/build-android*/bin/*.apk; then
-	cp /jedi/build-android*/bin/*.apk "./share/renderdoc/plugins/android/"
+	cp /jedi/build-android*/bin/*.apk "jedi-renderdoc/share/renderdoc/plugins/android/"
 else
 	echo "WARNING: Android build not present. Build arm32 and arm64 apks in build-android-arm{32,64} folders";
 fi
 
-tar -zcf jedi-renderdoc.tar.gz ./* --xform 's#^./##g'
+tar -zcf jedi-renderdoc.tar.gz jedi-renderdoc/* --xform 's#^./##g'
