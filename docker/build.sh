@@ -26,6 +26,6 @@ USER $USER
 ENTRYPOINT ["/jedi/docker/docker-entrypoint.sh"]
 EOF
 
-docker run -it --rm --network host -v "$CURRENT_PATH/../":/jedi/ jedi-renderdoc
+docker run -i --rm --network host -v "$CURRENT_PATH/../":/jedi/ jedi-renderdoc
 
 cd -
