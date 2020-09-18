@@ -55,8 +55,7 @@ if [ ! -d $ANDROID_SDK/tools ] ; then
 fi
 
 # Build the arm32 variant
-rm -rf build-android-arm32
-mkdir build-android-arm32
+mkdir -p build-android-arm32
 pushd build-android-arm32
 
 cmake -DBUILD_ANDROID=1 -DANDROID_ABI=armeabi-v7a -DANDROID_NATIVE_API_LEVEL=23 -DCMAKE_BUILD_TYPE=Release -DSTRIP_ANDROID_LIBRARY=On -DCMAKE_MAKE_PROGRAM=make ..
@@ -69,8 +68,7 @@ fi
 
 popd # build-android-arm32
 
-rm -rf build-android-arm64
-mkdir build-android-arm64
+mkdir -p build-android-arm64
 pushd build-android-arm64
 
 cmake -DBUILD_ANDROID=1 -DANDROID_ABI=arm64-v8a -DANDROID_NATIVE_API_LEVEL=23 -DCMAKE_BUILD_TYPE=Release -DSTRIP_ANDROID_LIBRARY=On -DCMAKE_MAKE_PROGRAM=make ..
