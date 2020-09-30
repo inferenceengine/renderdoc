@@ -778,7 +778,9 @@ void DoVendorChecks(GLPlatform &platform, GLWindowingData context)
   {
     bool broken = true;
 
-    // the bug should be fixed in version 325 and above
+    // the bug should be fixed in version 325 and above but can be reproduced on
+    // Adreno 650 which use the version 444 at least... so let's enable the workaround
+    // for all GPU
     const char *qualcommver = strstr(version, "V@");
     uint32_t ver = 0;
 
@@ -792,9 +794,6 @@ void DoVendorChecks(GLPlatform &platform, GLWindowingData context)
         ver += int((*qualcommver) - '0');
         qualcommver++;
       }
-
-      if(ver >= 325)
-        broken = false;
     }
 
     if(broken)
