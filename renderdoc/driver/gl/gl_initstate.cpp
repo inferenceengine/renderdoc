@@ -881,7 +881,10 @@ void GLResourceManager::PrepareTextureInitialContents(ResourceId liveid, Resourc
           }
           else
           {
-            if(VendorCheck[VendorCheck_Qualcomm_avoid_glCopyImageSubData])
+            // glCopyImageSubData seems to be failing only for GL_TEXTURE_CUBE_MAP, the emulated function doesn't handle
+            // certain type of texture so we need to make sure to run it only for this one. For example, the GL_ALPHA (texture
+            // containing text in PUBG) are completely black
+            if(VendorCheck[VendorCheck_Qualcomm_avoid_glCopyImageSubData] && details.curType == eGL_TEXTURE_CUBE_MAP)
               glEmulate::_glCopyImageSubData(res.name, details.curType, i, 0, 0, 0, tex,
                                              details.curType, i, 0, 0, 0, w, h, d);
             else
