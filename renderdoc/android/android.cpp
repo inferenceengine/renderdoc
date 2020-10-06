@@ -1203,8 +1203,22 @@ ExecuteResult AndroidRemoteServer::ExecuteAndInject(const char *a, const char *w
                               "shell settings put global gpu_debug_layer_app " + layerPackage);
       Android::adbExecCommand(
           m_deviceID, "shell settings put global gpu_debug_layers " RENDERDOC_VULKAN_LAYER_NAME);
-      Android::adbExecCommand(
-          m_deviceID, "shell settings put global gpu_debug_layers_gles " RENDERDOC_ANDROID_LIBRARY ":Layer1_32");
+
+      // If a layer was already set, make sure to append it after renderdoc so we can intercept the
+      // code inside too :)
+      Process::ProcessResult ret =
+          Android::adbExecCommand(m_deviceID, "shell getprop debug.gles.layers");
+      if(!ret.strStdout.trimmed().empty())
+      {
+        Android::adbExecCommand(
+            m_deviceID, "shell settings put global gpu_debug_layers_gles " RENDERDOC_ANDROID_LIBRARY
+                        ":" + ret.strStdout);
+      }
+      else
+      {
+        Android::adbExecCommand(
+            m_deviceID, "shell settings put global gpu_debug_layers_gles " RENDERDOC_ANDROID_LIBRARY);
+      }
     }
     else
     {
