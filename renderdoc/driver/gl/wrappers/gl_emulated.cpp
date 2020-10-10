@@ -34,6 +34,8 @@
 #include "maths/formatpacking.h"
 #include "maths/half_convert.h"
 
+#include <string>
+
 namespace glEmulate
 {
 PFNGLGETINTERNALFORMATIVPROC glGetInternalformativ_real = NULL;
@@ -2634,8 +2636,7 @@ void APIENTRY _glGetTexLevelParameterfv(GLenum target, GLint level, GLenum pname
 void APIENTRY _glGetTexImage(GLenum target, GLint level, const GLenum format, const GLenum type,
                              void *pixels)
 {
-  if((format == eGL_DEPTH_COMPONENT && !HasExt[NV_read_depth]) ||
-     (format == eGL_STENCIL && !HasExt[NV_read_stencil]) ||
+  if((format == eGL_STENCIL && !HasExt[NV_read_stencil]) ||
      (format == eGL_DEPTH_STENCIL && !HasExt[NV_read_depth_stencil]))
   {
     // TODO create a workaround for this
@@ -2685,6 +2686,132 @@ void APIENTRY _glGetTexImage(GLenum target, GLint level, const GLenum format, co
     attachment = eGL_STENCIL_ATTACHMENT;
   else if(format == eGL_DEPTH_STENCIL)
     attachment = eGL_DEPTH_STENCIL_ATTACHMENT;
+
+  if(format == eGL_DEPTH_COMPONENT)
+  {
+    RDCDEBUG("Attempt to read depth buffer component");
+
+    // Create a R32F FBO that will contains our depth buffer
+    GLuint drawFBO;
+    GL.glGenFramebuffers(1, &drawFBO);
+    GL.glBindFramebuffer(eGL_DRAW_FRAMEBUFFER, drawFBO);
+
+    // Generate the color attachment texture
+    GLuint tex;
+    GL.glGenTextures(1, &tex);
+    GL.glBindTexture(eGL_TEXTURE_2D, tex);
+    GL.glTexStorage2D(eGL_TEXTURE_2D, 1, eGL_R32F, width, height);
+
+    GL.glFramebufferTexture(eGL_DRAW_FRAMEBUFFER, eGL_COLOR_ATTACHMENT0, tex, 0);
+
+    if(GL.glCheckFramebufferStatus(eGL_FRAMEBUFFER) != eGL_FRAMEBUFFER_COMPLETE)
+    {
+      RDCERR("%s:%d: Depth FBO is not complete");
+      return;
+    }
+
+    GL.glBindTexture(eGL_TEXTURE_2D, boundTexture);
+
+    // Render the depth buffer to the fullscreen GL_R32F quad
+    // Logic inspired/adapted from GAPID
+    std::string vsSource;
+    vsSource += "#version 310 es\n";
+    vsSource += "#define attribute in\n";
+    vsSource += "#define varying out\n";
+    vsSource += "precision highp float;\n";
+    vsSource += "attribute vec2 position;\n";
+    vsSource += "varying vec2 texcoord;\n";
+    vsSource += "void main() {\n";
+    vsSource += "  gl_Position = vec4(position, 0.5, 1.0);\n";
+    vsSource += "  texcoord = position * vec2(0.5) + vec2(0.5);\n";
+    vsSource += "}\n";
+
+    std::string fsSource;
+    fsSource += "#version 310 es\n";
+    fsSource += "precision highp float;\n";
+    fsSource += "#define varying in\n";
+    fsSource += "out vec4 fragColor;\n";
+    fsSource += "uniform sampler2D tex;";
+    fsSource += "varying vec2 texcoord;\n";
+    fsSource += "void main() {\n";
+    fsSource += "  fragColor = texture(tex, texcoord);\n";
+    fsSource += "}\n";
+
+    auto prog = GL.glCreateProgram();
+
+    auto vs = GL.glCreateShader(eGL_VERTEX_SHADER);
+    char *vsSources[] = {const_cast<char *>(vsSource.data())};
+    GL.glShaderSource(vs, 1, vsSources, nullptr);
+    GL.glCompileShader(vs);
+    GL.glAttachShader(prog, vs);
+
+    auto fs = GL.glCreateShader(eGL_FRAGMENT_SHADER);
+    char *fsSources[] = {const_cast<char *>(fsSource.data())};
+    GL.glShaderSource(fs, 1, fsSources, nullptr);
+    GL.glCompileShader(fs);
+    GL.glAttachShader(prog, fs);
+
+    GL.glBindAttribLocation(prog, 0, "position");
+    GL.glLinkProgram(prog);
+
+    GLint linkStatus = 0;
+    GL.glGetProgramiv(prog, eGL_LINK_STATUS, &linkStatus);
+    if(linkStatus == 0)
+    {
+      char log[1024];
+      GL.glGetProgramInfoLog(prog, sizeof(log), nullptr, log);
+      RDCERR("Failed to compile program:\n%s", log);
+    }
+
+    GL.glDisable(eGL_CULL_FACE);
+    GL.glDisable(eGL_DEPTH_TEST);
+    GL.glViewport(0, 0, width, height);
+    GL.glClearColor(0.0, 0.0, 0.0, 0.0);
+    GL.glClear(eGL_COLOR_BUFFER_BIT);
+    GL.glUseProgram(prog);
+    GLfloat vb[] = {
+        -1.0f, +1.0f,    // 2--4
+        -1.0f, -1.0f,    // |\ |
+        +1.0f, +1.0f,    // | \|
+        +1.0f, -1.0f,    // 1--3
+    };
+    GL.glEnableVertexAttribArray(0);
+    GL.glVertexAttribPointer(0, 2, eGL_FLOAT, 0, 0, vb);
+    GL.glDrawArrays(eGL_TRIANGLE_STRIP, 0, 4);
+
+    GL.glDeleteShader(vs);
+    GL.glDeleteShader(fs);
+    GL.glDeleteProgram(prog);
+
+    // Temporary buffer containing the GL_RED float FBO (each comp is a GL_FLOAT)
+    float *tempBuffer = new float[width * height];
+    glBindFramebuffer(eGL_READ_FRAMEBUFFER, drawFBO);
+    GL.glReadPixels(0, 0, width, height, eGL_RED, eGL_FLOAT, tempBuffer);
+
+    // Convert the 'float' FBO to the linear pixel buffer
+    if(origInternalFormat == eGL_DEPTH_COMPONENT16)
+    {
+      for(int i = 0; i < (width * height); i++)
+      {
+        ((uint16_t *)pixels)[i] = tempBuffer[i] * 0xFFFF;
+      }
+    }
+    else if(origInternalFormat == eGL_DEPTH_COMPONENT24)
+    {
+      for(int i = 0; i < (width * height); i++)
+      {
+        ((uint16_t *)pixels)[i] = tempBuffer[i] * 0xFFFFFF;
+      }
+    }
+    else
+    {
+      RDCERR("Format(0x%X) not supported", origInternalFormat);
+    }
+
+    delete[] tempBuffer;
+
+    return;
+  }
 
   bool readDirectly = true;
 
