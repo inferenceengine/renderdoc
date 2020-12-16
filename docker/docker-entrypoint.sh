@@ -31,7 +31,7 @@ strip --strip-unneeded dist/lib/*
 
 # Build android libraries and apks
 export ANDROID_HOME=/jedi/android-sdk-linux
-export ANDROID_NDK_HOME=/jedi/android-sdk-linux/ndk-bundle/
+export ANDROID_NDK_HOME=/jedi/android-sdk-linux/ndk/21.3.6528147/
 export ANDROID_SDK=$ANDROID_HOME/
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 export PATH=$PATH:$ANDROID_SDK/tools/
@@ -43,7 +43,7 @@ then
   wget -q https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip -O android-sdk-tools.zip
   unzip -q android-sdk-tools.zip -d ${ANDROID_HOME}
   rm android-sdk-tools.zip
-  echo y | $ANDROID_HOME/tools/bin/sdkmanager "platform-tools" "platforms;android-26" "build-tools;29.0.2" ndk-bundle
+  echo y | $ANDROID_HOME/tools/bin/sdkmanager "platform-tools" "platforms;android-26" "build-tools;29.0.2" "ndk;21.3.6528147"
   cd -
   echo "Installing android tools...done"
 fi
