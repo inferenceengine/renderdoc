@@ -1211,8 +1211,7 @@ ExecuteResult AndroidRemoteServer::ExecuteAndInject(const char *a, const char *w
       if(!ret.strStdout.trimmed().empty())
       {
         Android::adbExecCommand(
-            m_deviceID, "shell settings put global gpu_debug_layers_gles " RENDERDOC_ANDROID_LIBRARY
-                        ":" + ret.strStdout);
+            m_deviceID, "shell settings put global gpu_debug_layers_gles " + ret.strStdout.trimmed() + ":" RENDERDOC_ANDROID_LIBRARY);
       }
       else
       {

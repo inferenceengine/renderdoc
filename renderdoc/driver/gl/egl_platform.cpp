@@ -472,8 +472,8 @@ bool EGLDispatchTable::PopulateForReplay()
     RDCWARN("Unable to load '%s'", STRINGIZE(func));                                                \
   }
 
-  EGL_HOOKED_SYMBOLS(LOAD_FUNC)
   EGL_NONHOOKED_SYMBOLS(LOAD_FUNC)
+  EGL_HOOKED_SYMBOLS(LOAD_FUNC)
 
 #undef LOAD_FUNC
   return symbols_ok;
