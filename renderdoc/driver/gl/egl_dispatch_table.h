@@ -68,7 +68,6 @@ typedef PFNEGLSWAPBUFFERSWITHDAMAGEKHRPROC PFN_eglSwapBuffersWithDamageKHR;
 
 #define EGL_HOOKED_SYMBOLS(FUNC)                   \
   FUNC(BindAPI, false, true);                      \
-  FUNC(GetProcAddress, false, true);               \
   FUNC(GetDisplay, false, true);                   \
   FUNC(GetPlatformDisplay, false, false);          \
   FUNC(CreateContext, false, true);                \
@@ -82,6 +81,7 @@ typedef PFNEGLSWAPBUFFERSWITHDAMAGEKHRPROC PFN_eglSwapBuffersWithDamageKHR;
   FUNC(SwapBuffersWithDamageKHR, true, false);
 
 #define EGL_NONHOOKED_SYMBOLS(FUNC)        \
+  FUNC(GetProcAddress, false, true);       \
   FUNC(ChooseConfig, false, true);         \
   FUNC(CreatePbufferSurface, false, true); \
   FUNC(DestroySurface, false, true);       \
