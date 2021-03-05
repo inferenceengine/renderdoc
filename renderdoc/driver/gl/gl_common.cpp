@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2019-2020 Baldur Karlsson
  * Copyright (c) 2014 Crytek
- * Copyright (C) 2021 Oplus. All rights reserved.
+ * Copyright (C) 2021 OPPO LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
