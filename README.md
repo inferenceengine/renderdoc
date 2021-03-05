@@ -38,6 +38,10 @@ API Support
 
 * Nintendo Switch&trade; support is distributed separately for authorized developers as part of the NintendoSDK. For more information, consult the Nintendo Developer Portal.
 
+Build from Docker
+--------------
+Build from Docker is supported. It recommends to use Ubuntu version 18.04 or 20.04. To build from Docker, go to renderdoc/docker, run command: ./build.sh. It will generate a package folder after build. This folder includes one folder jedi-renderdoc which includes the renderdoc executables and its zipped package.
+
 Downloads
 --------------
 

@@ -1,6 +1,8 @@
 #!/bin/bash
 
 set -e
+# SPDX-License-Identifier: GPL-2.0-only
+# Copyright (C) 2021 Oplus. All rights reserved.
 
 cd /jedi/
 mkdir -p renderdoc_build
