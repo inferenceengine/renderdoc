@@ -928,6 +928,7 @@ struct AndroidController : public IDeviceProtocolHandler
         Android::adbForwardPorts(dev.portbase, d, 0, 0, true);
 
         devices[d] = dev;
+        Android::initStats(d);
       }
 
       for(auto it = devices.begin(); it != devices.end(); ++it)
