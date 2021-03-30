@@ -26,6 +26,7 @@
 #include "android_utils.h"
 #include <ctype.h>
 #include <algorithm>
+#include <string>
 #include "common/formatting.h"
 #include "common/threading.h"
 #include "core/core.h"
@@ -273,6 +274,22 @@ rdcstr GetFriendlyName(const rdcstr &deviceID)
     combined = manuf + " " + model;
 
   return combined;
+}
+
+void initStats(const rdcstr &device)
+{
+  // This is for collecting cpu information.
+  Android::adbExecCommand(device.c_str(), "shell chmod +r /data/local/tmp/jedi/");
+  for(int i = 0; i < 8; i++)
+  {
+    Android::adbExecCommand(
+        device.c_str(),
+        StringFormat::Fmt("shell chmod +r /sys/devices/system/cpu/cpu%s/cpufreq/cpuinfo_cur_freq",
+                          std::to_string(i).c_str()));
+  }
+
+  // Before collecting the data, remove the old file.
+  Android::adbExecCommand(device.c_str(), "shell rm /data/local/tmp/jedi/cpustats.csv");
 }
 
 // on android only when we hit this function we write a marker that isn't a standard log. The

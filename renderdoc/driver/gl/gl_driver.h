@@ -3,6 +3,7 @@
  *
  * Copyright (c) 2019-2020 Baldur Karlsson
  * Copyright (c) 2014 Crytek
+ * Copyright (C) 2021 OPPO LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +35,7 @@
 #include "gl_manager.h"
 #include "gl_renderstate.h"
 #include "gl_resources.h"
+#include "sysinfo/CPUStats.h"
 
 class GLReplay;
 
@@ -582,6 +584,7 @@ private:
   WrappedOpenGL(const WrappedOpenGL &);
   WrappedOpenGL &operator=(const WrappedOpenGL &);
 
+  CPUStats cpuStats;
 public:
   WrappedOpenGL(GLPlatform &platform);
   virtual ~WrappedOpenGL();

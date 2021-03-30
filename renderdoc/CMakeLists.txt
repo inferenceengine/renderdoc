@@ -201,6 +201,7 @@ set(sources
     strings/string_utils.cpp
     strings/string_utils.h
     strings/utf8printf.cpp
+    sysinfo/CPUStats.cpp
     3rdparty/jpeg-compressor/jpgd.cpp
     3rdparty/jpeg-compressor/jpgd.h
     3rdparty/jpeg-compressor/jpge.cpp

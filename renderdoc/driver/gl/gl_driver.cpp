@@ -3,6 +3,7 @@
  *
  * Copyright (c) 2019-2020 Baldur Karlsson
  * Copyright (c) 2014 Crytek
+ * Copyright (C) 2021 OPPO LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -2156,6 +2157,9 @@ void WrappedOpenGL::StartFrameCapture(void *dev, void *wnd)
   if(!IsBackgroundCapturing(m_State))
     return;
 
+  // add a thread to collect cpu information of app while capturing.
+  cpuStats.onStartCapture();
+
   m_CaptureTimer.Restart();
 
   SCOPED_LOCK(glLock);
@@ -2218,6 +2222,9 @@ bool WrappedOpenGL::EndFrameCapture(void *dev, void *wnd)
   if(!IsActiveCapturing(m_State))
     return true;
 
+  RDCLOG("CPU Stats End");
+  cpuStats.setCaptureNum(m_CapturedFrames.back().frameNumber);
+  cpuStats.onEndCapture();
   SCOPED_LOCK(glLock);
 
   CaptureFailReason reason = CaptureSucceeded;

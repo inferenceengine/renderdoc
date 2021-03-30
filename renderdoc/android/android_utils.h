@@ -2,6 +2,7 @@
  * The MIT License (MIT)
  *
  * Copyright (c) 2019-2020 Baldur Karlsson
+ * Copyright (C) 2021 OPPO LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -54,6 +55,7 @@ bool IsSupported(rdcstr deviceID);
 bool SupportsNativeLayers(const rdcstr &deviceID);
 rdcstr DetermineInstalledABI(const rdcstr &deviceID, const rdcstr &packageName);
 rdcstr GetFriendlyName(const rdcstr &deviceID);
+void initStats(const rdcstr &device);
 
 // supported ABIs
 enum class ABI
