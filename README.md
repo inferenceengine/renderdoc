@@ -42,6 +42,10 @@ Build from Docker
 --------------
 Build from Docker is supported. It recommends to use Ubuntu version 18.04 or 20.04. To build from Docker, go to renderdoc/docker, run command: ./build.sh. It will generate a package folder after build. This folder includes one folder jedi-renderdoc which includes the renderdoc executables and its zipped package.
 
+New Feature
+--------------
+The CPU workload is collected along with each captured frame. When Renderdoc starts, a new cpustats.csv file is created or recreated. All CPU information data is saved to /data/local/tmp/jedi/cpustats.csv.
+
 Downloads
 --------------
 
